@@ -2,115 +2,99 @@
 pragma solidity ^0.8.19;
 
 /*
-  InsurancePolicy.sol
-  - Manages policy creation, premium deposits, and claims
-  - Keeps transparent records on blockchain
+  Project.sol - Scholarship Disbursement DApp (first part)
+  - Roles via AccessControl
+  - Scholarship & Application structs
+  - Events and basic admin function to add scholarships
 */
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract InsurancePolicy is AccessControl, ReentrancyGuard {
+contract Project is AccessControl, ReentrancyGuard {
+    // Roles
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    bytes32 public constant INSURER_ROLE = keccak256("INSURER_ROLE");
+    bytes32 public constant AUDITOR_ROLE = keccak256("AUDITOR_ROLE");
 
-    uint256 private _policyIds;
-    uint256 private _claimIds;
+    // Counters
+    uint256 private _scholarshipIds;
+    uint256 private _applicationIds;
 
-    struct Policy {
+    // Scholarship definition
+    struct Scholarship {
         uint256 id;
-        address holder;
-        uint256 premium;
-        uint256 coverageAmount;
+        string name;
+        uint256 amount;    // in wei (or smallest token unit)
         bool active;
-        string detailsURI;
+        string metadataURI; // off-chain metadata (IPFS hash / URL)
     }
 
-    struct Claim {
+    // Application definition (minimal)
+    struct Application {
         uint256 id;
-        uint256 policyId;
-        address claimant;
-        uint256 amount;
-        string reason;
+        address student;
+        uint256 scholarshipId;
+        string docsURI;   // IPFS hash for documents
         bool approved;
         bool paid;
+        uint256 appliedAt;
     }
 
-    mapping(uint256 => Policy) public policies;
-    mapping(uint256 => Claim) public claims;
+    // Storage
+    mapping(uint256 => Scholarship) public scholarships;
+    mapping(uint256 => Application) public applications;
+    mapping(address => uint256[]) public applicationsByStudent;
 
-    event PolicyCreated(uint256 indexed id, address indexed holder);
-    event PremiumPaid(uint256 indexed id, uint256 amount);
-    event ClaimFiled(uint256 indexed id, address indexed claimant);
-    event ClaimApproved(uint256 indexed id, uint256 amount);
-    event ClaimPaid(uint256 indexed id, address indexed claimant, uint256 amount);
+    // Events
+    event ScholarshipAdded(uint256 indexed id, string name, uint256 amount);
+    event ScholarshipUpdated(uint256 indexed id, bool active);
+    event ApplicationSubmitted(uint256 indexed appId, uint256 indexed scholarshipId, address indexed student);
+    event ApplicationApproved(uint256 indexed appId, uint256 indexed scholarshipId);
+    event ScholarshipDisbursed(uint256 indexed appId, address indexed student, uint256 amount);
 
+    // Constructor: grant deployer admin role
     constructor(address admin) {
+        require(admin != address(0), "admin-zero-address");
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
         _setupRole(ADMIN_ROLE, admin);
     }
 
+    // Modifiers
     modifier onlyAdmin() {
         require(hasRole(ADMIN_ROLE, msg.sender), "not-admin");
         _;
     }
 
-    // Create a new insurance policy
-    function createPolicy(
-        address holder,
-        uint256 premium,
-        uint256 coverageAmount,
-        string calldata detailsURI
+    // ---------- Basic admin functions ----------
+    /// @notice Add a new scholarship program
+    function addScholarship(
+        string calldata name,
+        uint256 amount,
+        string calldata metadataURI
     ) external onlyAdmin returns (uint256) {
-        require(holder != address(0), "zero-holder");
+        require(amount > 0, "amount-0");
 
-        _policyIds += 1;
-        uint256 id = _policyIds;
+        _scholarshipIds += 1;
+        uint256 id = _scholarshipIds;
 
-        policies[id] = Policy({
+        scholarships[id] = Scholarship({
             id: id,
-            holder: holder,
-            premium: premium,
-            coverageAmount: coverageAmount,
-            active: true,
-            detailsURI: detailsURI
-        });
-
-        emit PolicyCreated(id, holder);
-        return id;
-    }
-
-    // Premium deposit (payable)
-    function payPremium(uint256 policyId) external payable nonReentrant {
-        Policy storage p = policies[policyId];
-        require(p.active, "inactive");
-        require(msg.sender == p.holder, "not-holder");
-        require(msg.value == p.premium, "wrong-premium");
-
-        emit PremiumPaid(policyId, msg.value);
-    }
-
-    // File claim
-    function fileClaim(uint256 policyId, uint256 amount, string calldata reason) external returns (uint256) {
-        Policy storage p = policies[policyId];
-        require(p.active, "policy-inactive");
-        require(msg.sender == p.holder, "not-holder");
-        require(amount <= p.coverageAmount, "too-high");
-
-        _claimIds += 1;
-        uint256 id = _claimIds;
-
-        claims[id] = Claim({
-            id: id,
-            policyId: policyId,
-            claimant: msg.sender,
+            name: name,
             amount: amount,
-            reason: reason,
-            approved: false,
-            paid: false
+            active: true,
+            metadataURI: metadataURI
         });
 
-        emit ClaimFiled(id, msg.sender);
+        emit ScholarshipAdded(id, name, amount);
         return id;
     }
+
+    /// @notice Toggle active state for a scholarship
+    function setScholarshipActive(uint256 id, bool active) external onlyAdmin {
+        require(scholarships[id].id != 0, "sch-not-found");
+        scholarships[id].active = active;
+        emit ScholarshipUpdated(id, active);
+    }
+
+    // Further functions (apply, approve, disburse, deposit, withdraw) to be added next...
 }
