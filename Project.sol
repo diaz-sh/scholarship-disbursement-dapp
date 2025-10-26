@@ -22,7 +22,7 @@ contract Project is AccessControl, ReentrancyGuard {
 
     // Scholarship definition
     struct Scholarship {
-        uint256 id;
+        uint256 id;  
         string name;
         uint256 amount;    // in wei (or smallest token unit)
         bool active;
@@ -98,3 +98,4 @@ contract Project is AccessControl, ReentrancyGuard {
 
     // Further functions (apply, approve, disburse, deposit, withdraw) to be added next...
 }
+
