@@ -39,4 +39,78 @@ The Scholarship Disbursement dApp enables:
 ---
 
 ## 📂 Project Structure
+scholarship-disbursement-dapp/
+│
+├── contracts/ # Solidity smart contracts
+│ └── Scholarship.sol # Main contract for managing scholarships
+│
+├── scripts/ # Deployment and automation scripts
+│ └── deploy.js # Script to deploy contract on blockchain
+│
+├── test/ # Unit tests for smart contracts
+│ └── Scholarship.test.js # Tests for core functionalities
+│
+├── frontend/ # Frontend application (React/Next.js)
+│ ├── components/ # Reusable UI components
+│ ├── pages/ # Application pages (Home, Admin, Apply, etc.)
+│ ├── utils/ # Blockchain interaction helpers
+│ └── styles/ # CSS / Tailwind styling files
+│
+├── hardhat.config.js # Hardhat configuration
+├── package.json # Project dependencies and scripts
+└── README.md # Documentation
+
+
+---
+
+## 🚀 Getting Started
+
+### 1️⃣ Clone the Repository
+bash
+git clone https://github.com/your-username/scholarship-disbursement-dapp.git
+cd scholarship-disbursement-dapp
+
+2️⃣ Install Dependencies
+npm install
+
+3️⃣ Compile Smart Contracts
+npx hardhat compile
+
+4️⃣ Deploy to a Network
+npx hardhat run scripts/deploy.js --network <network_name>
+
+5️⃣ Start the Frontend
+cd frontend
+npm run dev
+
+🧪 Testing
+
+To run unit tests for the smart contracts:
+
+npx hardhat test
+
+
+You can also use Hardhat’s local blockchain for testing deployments and transactions before deploying to a live network.
+
+🔐 Security and Access Control
+
+Access control ensures only authorized administrators can create or approve scholarships.
+
+All transactions and fund movements are recorded immutably on the blockchain.
+
+Funds are held securely within the smart contract until disbursement conditions are met.
+
+Regular audits are recommended before mainnet deployment.
+
+🧩 Future Enhancements
+
+Integration with IPFS for decentralized document storage
+
+Multi-chain compatibility (Polygon, BSC, etc.)
+
+DAO-based governance for fund management
+
+Notification system for applicants and admins
+
+Advanced analytics dashboard for institutions
 
