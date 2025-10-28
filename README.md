@@ -18,7 +18,8 @@ The Scholarship Disbursement dApp enables:
 ## 🧠 Key Features
 
 - ✅ Scholarship fund setup by administrators  
-- 📝 Application submission by students  
+- 📝 Application submission by students
+- Smooth ux/ui for seamless integration
 - ✔️ Automated approval process based on predefined criteria  
 - 💸 Smart contract-driven disbursement of funds  
 - 🔍 Transparent tracking of funds and recipients on the blockchain  
