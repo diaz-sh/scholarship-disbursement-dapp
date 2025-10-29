@@ -15,7 +15,7 @@ The Scholarship Disbursement dApp enables:
 
 ---
 
-## 🧠 Key Features
+## 🧠 Key Features of this project
 
 - ✅ Scholarship fund setup by administrators  
 - 📝 Application submission by students
