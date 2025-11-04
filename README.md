@@ -115,7 +115,7 @@ Notification system for applicants and admins
 
 Advanced analytics dashboard for institutions
 
-##Contract Deployment
+## Contract Deployment
 
 0xab163012a41177965dB902fcbB0DFBD245cd913F
 <img width="1397" height="699" alt="image" src="https://github.com/user-attachments/assets/d1a9337d-98ce-4d1c-83cf-bfd4ecaa3971" />
